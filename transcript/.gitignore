@@ -1,0 +1,6 @@
+/Scripts
+/Lib
+/share
+/Include
+/.ruff_cache
+pyvenv.cfg
