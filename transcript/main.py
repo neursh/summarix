@@ -6,7 +6,6 @@ from flow_manager import FlowManager
 flow_manager = FlowManager()
 app = FastAPI()
 
-
 @app.websocket("/transcript")
 async def transcript_process(websocket: WebSocket):
     await flow_manager.connect(websocket)
