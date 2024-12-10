@@ -7,16 +7,15 @@ flow_manager = FlowManager()
 app = FastAPI()
 
 
-@app.websocket("/transcript/process")
+@app.websocket("/transcript")
 async def transcript_process(websocket: WebSocket):
     await flow_manager.connect(websocket)
 
     queue = flow_manager.queue_messengers[websocket]
-
     queue_collect = await queue.get()
 
     try:
-        if queue_collect[0] == 0:
+        if queue_collect[0] == 1:
             await websocket.send_json(
                 {
                     "status": "processing",
@@ -34,10 +33,10 @@ async def transcript_process(websocket: WebSocket):
             )
 
         while queue_collect is not None:
-            # Ping, also checks for queue update in line
+            # Ping, also checks for queue update in line.
+            # This will also raise an exception when client disconnects.
             while True:
                 await websocket.send_bytes(b"0")
-
                 try:
                     queue_collect = queue.get_nowait()
                 except:
@@ -47,7 +46,7 @@ async def transcript_process(websocket: WebSocket):
 
                 await asyncio.sleep(1)
 
-            if queue_collect[0] == 0:
+            if queue_collect[0] == 1:
                 await websocket.send_json(
                     {
                         "status": "processing",

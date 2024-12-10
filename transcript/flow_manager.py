@@ -11,7 +11,7 @@ class FlowManager:
 
     async def queue_update(self):
         for queue in self.queue_messengers.items():
-            await queue[1].put([self.active_connections.index(queue[0]), self.len()])
+            await queue[1].put([self.active_connections.index(queue[0]) + 1, self.len()])
 
     def len(self):
         return self.active_connections.__len__()
@@ -23,7 +23,7 @@ class FlowManager:
         self.active_connections.append(websocket)
 
         await self.queue_messengers[websocket].put(
-            [self.active_connections.index(websocket), self.len()]
+            [self.active_connections.index(websocket) + 1, self.len()]
         )
 
     async def disconnect(self, websocket: WebSocket):

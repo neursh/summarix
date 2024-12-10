@@ -4,3 +4,4 @@
 /Include
 /.ruff_cache
 pyvenv.cfg
+*.pyc
