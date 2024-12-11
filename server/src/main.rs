@@ -1,5 +1,4 @@
 mod routes;
-use std::thread::spawn;
 
 use axum::{ routing::get, Router };
 use tokio::process::Command;

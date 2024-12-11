@@ -65,6 +65,8 @@ async fn video_process_report(
             return;
         }
     }
+
+    transcript_layer.0.close(None).await.unwrap();
 }
 
 async fn client_health(health_reader: Arc<Mutex<SplitStream<WebSocket>>>) {
