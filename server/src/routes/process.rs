@@ -30,11 +30,11 @@ async fn process_client(socket: WebSocket, query: Query<UrlQuery>) {
         Arc::new(Mutex::new(stream.1)),
     ));
 
-    let report_writer = stream.0.clone();
-    tokio::spawn(video_process_report(report_writer, query.url.clone()));
-
     let health_reader = stream.1.clone();
     tokio::spawn(client_health(health_reader));
+
+    let report_writer = stream.0.clone();
+    video_process_report(report_writer, query.url.clone()).await;
 }
 
 async fn video_process_report(
@@ -51,22 +51,18 @@ async fn video_process_report(
 
     let mut writer_lock = writer.lock().await;
     while let Ok(Some(report)) = transcript_layer.0.try_next().await {
-        if report.is_text() {
-            if
-                writer_lock
-                    .send(Message::Text(report.into_text().unwrap())).await
-                    .is_err()
-            {
-                return;
-            }
-        } else if report.is_binary() {
-            if
-                writer_lock
-                    .send(Message::Binary(report.into_data())).await
-                    .is_err()
-            {
-                return;
-            }
+        let send_report = match report.is_text() {
+            true =>
+                writer_lock.send(
+                    Message::Text(report.into_text().unwrap())
+                ).await,
+
+            false =>
+                writer_lock.send(Message::Binary(report.into_data())).await,
+        };
+
+        if send_report.is_err() {
+            return;
         }
     }
 }
