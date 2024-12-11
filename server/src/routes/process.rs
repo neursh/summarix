@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{ ws::{ Message, WebSocket }, Query, WebSocketUpgrade },
+    extract::{ ws::{ Message, WebSocket }, Query, State, WebSocketUpgrade },
     response::Response,
 };
 use futures_util::{
@@ -14,16 +14,26 @@ use serde::Deserialize;
 use tokio::sync::Mutex;
 use tokio_tungstenite::{ connect_async, tungstenite };
 
+use crate::states::ServerEnv;
+
 #[derive(Deserialize)]
 pub struct UrlQuery {
     url: String,
 }
 
-pub async fn process(ws: WebSocketUpgrade, query: Query<UrlQuery>) -> Response {
-    ws.on_upgrade(|socket| process_client(socket, query))
+pub async fn process(
+    ws: WebSocketUpgrade,
+    query: Query<UrlQuery>,
+    State(state): State<ServerEnv>
+) -> Response {
+    ws.on_upgrade(|socket| process_client(socket, query, state))
 }
 
-async fn process_client(socket: WebSocket, query: Query<UrlQuery>) {
+async fn process_client(
+    socket: WebSocket,
+    query: Query<UrlQuery>,
+    state: ServerEnv
+) {
     let stream = socket.split();
     let stream = Arc::new((
         Arc::new(Mutex::new(stream.0)),
@@ -34,15 +44,20 @@ async fn process_client(socket: WebSocket, query: Query<UrlQuery>) {
     tokio::spawn(client_health(health_reader));
 
     let report_writer = stream.0.clone();
-    video_process_report(report_writer, query.url.clone()).await;
+    video_process_report(
+        report_writer,
+        query.url.clone(),
+        state.transcript_port.clone()
+    ).await;
 }
 
 async fn video_process_report(
     writer: Arc<Mutex<SplitSink<WebSocket, Message>>>,
-    video_link: String
+    video_link: String,
+    transcript_port: String
 ) {
     let mut transcript_layer = connect_async(
-        "ws://127.0.0.1:21637/transcript"
+        format!("ws://127.0.0.1:{}/transcript", transcript_port)
     ).await.unwrap();
 
     transcript_layer.0

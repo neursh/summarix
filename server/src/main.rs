@@ -1,37 +1,52 @@
 mod routes;
+mod micro_services;
+mod states;
 
+use std::{ collections::HashMap, env };
+
+use dotenv::dotenv;
 use axum::{ routing::get, Router };
-use tokio::process::Command;
+use micro_services::mirco_services;
+use states::ServerEnv;
 
 #[tokio::main]
 async fn main() {
-    mirco_services();
+    dotenv().ok();
 
-    let app = Router::new().route("/process", get(routes::process::process));
+    let mut dotenv_map: HashMap<String, String> = HashMap::new();
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:4173").await.unwrap();
+    for (key, value) in env::vars() {
+        dotenv_map.insert(key, value);
+    }
+
+    let server_port = dotenv_map.get("SERVER_PORT").unwrap().clone();
+
+    let state = ServerEnv {
+        server_port: server_port.clone(),
+        context_port: dotenv_map.get("CONTEXT_SERVICE_PORT").unwrap().clone(),
+        transcript_port: dotenv_map
+            .get("TRANSCRIPT_SERVICE_PORT")
+            .unwrap()
+            .clone(),
+        is_dev: if dotenv_map.get("DEV").unwrap().clone() == "FALSE" {
+            false
+        } else {
+            true
+        },
+    };
+
+    mirco_services(
+        state.context_port.clone(),
+        state.transcript_port.clone(),
+        state.is_dev.clone()
+    );
+
+    let app = Router::new()
+        .route("/process", get(routes::process::process))
+        .with_state(state);
+
+    let listener = tokio::net::TcpListener
+        ::bind(format!("127.0.0.1:{}", server_port)).await
+        .unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-fn mirco_services() {
-    tokio::spawn(transcript_service());
-    tokio::spawn(context_service());
-}
-
-async fn transcript_service() {
-    let mut transcript = Command::new("fastapi")
-        .args(["dev", "services/transcript/main.py", "--port", "21637"])
-        .spawn()
-        .unwrap();
-
-    println!("{}", transcript.wait().await.unwrap());
-}
-
-async fn context_service() {
-    let mut context = Command::new("fastapi")
-        .args(["dev", "services/context/main.py"])
-        .spawn()
-        .unwrap();
-
-    println!("{}", context.wait().await.unwrap());
 }
