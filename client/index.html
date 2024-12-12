@@ -25,12 +25,39 @@
         </div>
     </div>
 
-    <div class="foreground"></div>
+    <div class="foreground">
+        <div class="content">
+            <div class="urlBox">
+                <input id="providedUrl" type="text" placeholder="Enter a Youtube video URL" oninput="urlInputChange()"
+                    onchange="urlInputChange()">
+            </div>
+            <iframe id="videoPreview" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+                title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
 
     <nav class="navbar">
         <h1 class="title">
             <span>S</span><span>u</span><span>m</span><span>m</span><span>a</span><span>r</span><span>i</span><span>x</span>
         </h1>
+        <ul class="links">
+            <li>
+                <a href="">
+                    How it works
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    Your history
+                </a>
+            </li>
+            <li>
+                <a href="http://github.com/neursh/summarix" target="_blank" rel="noopener noreferrer">
+                    Github
+                </a>
+            </li>
+        </ul>
     </nav>
 
     <script src="motion.js"></script>
