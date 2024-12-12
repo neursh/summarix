@@ -19,8 +19,8 @@ A final term school project.
 
 ### Frontend:
 
-| Typescript |
+| Vanilla    |
 | ---------- |
-| Vite       |
-| React      |
-| Tailwind   |
+| HTML       |
+| CSS        |
+| Javascript |

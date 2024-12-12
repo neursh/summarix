@@ -1,0 +1,84 @@
+@font-face {
+    font-family: "Stardom";
+    src: url("./public/Stardom-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+    font-style: normal;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    background-color: white;
+}
+
+.background {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+}
+.background .stripes {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+.background .stripes div {
+    width: 1px;
+    background-color: black;
+    opacity: 0.2;
+
+    /* Animation related variables */
+    height: 0;
+}
+.background .mist {
+    position: absolute;
+    bottom: 0;
+    height: 32rem;
+    width: 100%;
+    background: rgb(255, 255, 255);
+    background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
+.foreground {
+    position: absolute;
+    width: 48rem;
+    height: 24rem;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: 1rem;
+    outline: #c0c0c0 solid 1px;
+    backdrop-filter: blur(4px);
+
+    /* Animation related variables */
+    opacity: 0;
+}
+
+.navbar {
+    position: fixed;
+    display: flex;
+    top: 0;
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+}
+.navbar .title {
+    font-family: "Stardom";
+    margin: 0;
+}
+.navbar .title span {
+    display: inline-block;
+
+    /* Animation related variables */
+    opacity: 0;
+    translate: 10px;
+}
