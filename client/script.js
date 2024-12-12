@@ -1,5 +1,8 @@
 const { animate, stagger } = Motion;
 
+const providedUrl = document.getElementById("providedUrl");
+const videoPreview = document.getElementById("videoPreview");
+
 introAnimation();
 
 async function introAnimation() {
@@ -23,7 +26,12 @@ async function introAnimation() {
 }
 
 function getVideoId(source) {
-    const sourceParse = new URL(source);
+    let sourceParse = null;
+    try {
+        sourceParse = new URL(source);
+    } catch {
+        return "";
+    }
 
     let id = sourceParse.searchParams.get("v");
 
@@ -38,16 +46,25 @@ function getVideoId(source) {
 }
 
 function updatePreview(id) {
-    if (id.length === 11) {
-        const composedUrl = `https://www.youtube-nocookie.com/embed/${id}`;
-        const iframe = document.getElementById("videoPreview");
+    let openSummarize = false;
+    let composeUrl = "";
 
-        if (iframe.src !== composedUrl) {
-            iframe.src = composedUrl;
-        }
+    if (id.length === 11) {
+        composeUrl = `https://www.youtube-nocookie.com/embed/${id}`;
+        openSummarize = true;
+    }
+
+    if (videoPreview.src !== composeUrl) {
+        videoPreview.src = composeUrl;
+
+        animate(
+            "#summarize",
+            { translate: openSummarize ? ["6rem", "12rem"] : "6rem" },
+            { ease: [0.25, 0.25, 0, 1], duration: 0.5 }
+        );
     }
 }
 
 function urlInputChange() {
-    updatePreview(getVideoId(document.getElementById("providedUrl").value));
+    updatePreview(getVideoId(providedUrl.value));
 }

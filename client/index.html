@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summarix</title>
     <link rel="stylesheet" href="style.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-        rel="stylesheet">
 </head>
 
 <body>
@@ -27,13 +24,16 @@
 
     <div class="foreground">
         <div class="content">
-            <div class="urlBox">
+            <div class="urlBar">
+                <div id="summarize">
+                    Summarize
+                </div>
                 <input id="providedUrl" type="text" placeholder="Enter a Youtube video URL" oninput="urlInputChange()"
                     onchange="urlInputChange()">
             </div>
-            <iframe id="videoPreview" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
-                title="YouTube video player" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe id="videoPreview" src="" title="Video preview" frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
         </div>
     </div>
 
