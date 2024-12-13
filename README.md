@@ -13,7 +13,7 @@ A final term school project.
 | Rust    | Python        |
 | ------- | ------------- |
 | Axum    | FastAPI       |
-| WS      | REST API + WS |
+| WS      | REST API      |
 | Proxy   | yt-dlp        |
 | MongoDB |
 
