@@ -1,4 +1,5 @@
 import asyncio
+import re
 from queue import Queue
 from threading import Thread
 
@@ -12,6 +13,7 @@ app = FastAPI()
 
 @app.get("/context")
 async def context(url: str):
+    subtitle_cleanup = re.compile(r"(?<!\\)\w+|[^\x00-\x7F]|'\w+")
     yt_result = Queue()
     yt = Thread(target=yt_fetch_context, args=(url, yt_result,))
     yt.start()
@@ -49,7 +51,7 @@ async def context(url: str):
         for sub in subtitle["events"]:
             if "segs" in sub:
                 for segment in sub["segs"]:
-                    combined += segment["utf8"] + " "
+                    combined += " ".join(subtitle_cleanup.findall(segment["utf8"])) + " "
             # Yeild the event loop to handle other tasks
             await asyncio.sleep(0)
     
