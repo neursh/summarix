@@ -14,6 +14,19 @@ pub struct ContextResponse {
     pub subtitle: String,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct SummaryResponse {
+    pub result: SummaryResult,
+    pub success: bool,
+    pub errors: Vec<String>,
+    pub messages: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SummaryResult {
+    response: String,
+}
+
 #[derive(Deserialize)]
 pub struct UrlQuery {
     pub url: String,
