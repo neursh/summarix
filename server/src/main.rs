@@ -24,10 +24,6 @@ async fn main() {
     let state = ServerEnv {
         server_port: server_port.clone(),
         context_port: dotenv_map.get("CONTEXT_SERVICE_PORT").unwrap().clone(),
-        transcript_port: dotenv_map
-            .get("TRANSCRIPT_SERVICE_PORT")
-            .unwrap()
-            .clone(),
         is_dev: if dotenv_map.get("DEV").unwrap().clone() == "FALSE" {
             false
         } else {
@@ -37,7 +33,6 @@ async fn main() {
 
     mirco_services(
         state.context_port.clone(),
-        state.transcript_port.clone(),
         state.is_dev.clone()
     );
 
