@@ -1,6 +1,6 @@
 # Summarix
 
-Summarize any audios, lectures from Youtube videos. Just one click away.
+Summarize videos from Youtube (only ones with subtitle 😁).
 
 Also this a fun experimental project for me to write unhinged tech stack.
 
