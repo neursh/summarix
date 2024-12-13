@@ -10,9 +10,9 @@ A final term school project.
 
 ### Backend:
 
-| Rust    | Python            | Typescript          |
-| ------- | ----------------- | ------------------- |
-| Axum    | FastAPI           | Workers AI endpoint |
+| Rust    | Python            |
+| ------- | ----------------- |
+| Axum    | FastAPI           |
 | WS      | REST API + WS     |
 | Proxy   | PyTorch (whisper) |
 | MongoDB | yt-dlp            |
