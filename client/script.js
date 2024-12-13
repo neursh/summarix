@@ -1,7 +1,26 @@
 const { animate, stagger } = Motion;
 
+class SocketClient {
+    socket;
+    connected = false;
+
+    constructor(url) {
+        this.socket = new WebSocket(url);
+    }
+
+    connect() {
+        if (!this.connected) {
+            this.connected = true;
+            this.socket = new WebSocket(url);
+        }
+    }
+}
+
+const socketClient = new SocketClient();
+
 const providedUrl = document.getElementById("providedUrl");
 const videoPreview = document.getElementById("videoPreview");
+const summarizeButton = document.getElementById("summarize");
 
 introAnimation();
 
@@ -25,11 +44,16 @@ async function introAnimation() {
     );
 }
 
+const allowedHostnames = ["www.youtube.com", "youtube.com", "m.youtube.com", "youtu.be", "www.youtube-nocookie.com", "youtube-nocookie.com"];
 function getVideoId(source) {
     let sourceParse = null;
     try {
         sourceParse = new URL(source);
     } catch {
+        return "";
+    }
+
+    if (!allowedHostnames.includes(sourceParse.hostname)) {
         return "";
     }
 
@@ -54,12 +78,18 @@ function updatePreview(id) {
         openSummarize = true;
     }
 
-    if (videoPreview.src !== composeUrl) {
+    if (videoPreview.getAttribute("src") !== composeUrl) {
         videoPreview.src = composeUrl;
 
         animate(
             "#summarize",
-            { translate: openSummarize ? ["6rem", "12rem"] : "6rem" },
+            { translate: openSummarize ? ["6rem", "9rem"] : "6rem" },
+            { ease: [0.25, 0.25, 0, 1], duration: 0.5 }
+        );
+
+        animate(
+            "#providedUrl",
+            { translate: openSummarize ? ["0rem", "-3rem"] : "0rem" },
             { ease: [0.25, 0.25, 0, 1], duration: 0.5 }
         );
     }
@@ -67,4 +97,13 @@ function updatePreview(id) {
 
 function urlInputChange() {
     updatePreview(getVideoId(providedUrl.value));
+}
+
+function summarizeVideo() {
+    providedUrl.setAttribute("disabled", "");
+    summarizeButton.setAttribute("disabled", "");
+
+    const url = providedUrl.value;
+
+    socketClient.connect(`wss://dev.neurs.click/process?url=${url}`);
 }

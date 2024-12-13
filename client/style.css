@@ -111,6 +111,7 @@ a:active {
     outline: none;
     border: #a0a0a0 solid 1px;
     border-radius: 9999px;
+    background-color: white;
 }
 .foreground .content .urlBar #summarize {
     position: absolute;
@@ -119,6 +120,8 @@ a:active {
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
+    outline: none;
+    border: none;
     background-color: #0a0908;
     color: white;
     font-size: small;
@@ -130,7 +133,7 @@ a:active {
 }
 .foreground .content #videoPreview {
     width: 100%;
-    height: calc(100% - 50px);
+    height: calc(100% - 56px);
 }
 
 .navbar {
