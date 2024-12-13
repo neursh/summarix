@@ -10,12 +10,12 @@ A final term school project.
 
 ### Backend:
 
-| Rust    | Python            |
-| ------- | ----------------- |
-| Axum    | FastAPI           |
-| WS      | REST API + WS     |
-| Proxy   | PyTorch (whisper) |
-| MongoDB | yt-dlp            |
+| Rust    | Python        |
+| ------- | ------------- |
+| Axum    | FastAPI       |
+| WS      | REST API + WS |
+| Proxy   | yt-dlp        |
+| MongoDB |
 
 ### Frontend:
 
