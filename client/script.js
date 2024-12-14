@@ -1,22 +1,30 @@
 const { animate, stagger } = Motion;
 
-class SocketClient {
+class SummarixClient {
     socket;
     connected = false;
 
-    constructor(url) {
-        this.socket = new WebSocket(url);
-    }
-
-    connect() {
+    connect(url) {
         if (!this.connected) {
             this.connected = true;
-            this.socket = new WebSocket(url);
+            this.socket = new WebSocket(
+                `wss://dev.neurs.click/process?url=${url}`
+            );
+        }
+    }
+
+    bind() {
+        if (this.socket) {
+            this.socket.addEventListener("open", () => {});
+            this.socket.addEventListener("message", (event) => {
+                console.log(event.data);
+            });
+            this.socket.addEventListener("close", () => {});
         }
     }
 }
 
-const socketClient = new SocketClient();
+const summarixClient = new SummarixClient();
 
 const providedUrl = document.getElementById("providedUrl");
 const videoPreview = document.getElementById("videoPreview");
@@ -44,7 +52,14 @@ async function introAnimation() {
     );
 }
 
-const allowedHostnames = ["www.youtube.com", "youtube.com", "m.youtube.com", "youtu.be", "www.youtube-nocookie.com", "youtube-nocookie.com"];
+const allowedHostnames = [
+    "www.youtube.com",
+    "youtube.com",
+    "m.youtube.com",
+    "youtu.be",
+    "www.youtube-nocookie.com",
+    "youtube-nocookie.com",
+];
 function getVideoId(source) {
     let sourceParse = null;
     try {
@@ -105,5 +120,7 @@ function summarizeVideo() {
 
     const url = providedUrl.value;
 
-    socketClient.connect(`wss://dev.neurs.click/process?url=${url}`);
+    socketClient.connect(url);
+
+    socketClient.bind();
 }
