@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{ sync::Arc, time::Duration };
 
 use axum::{
     extract::{ ws::{ Message, WebSocket }, Query, State, WebSocketUpgrade },
@@ -32,6 +32,9 @@ async fn process_client(
 
     let health_reader = stream.1.clone();
     tokio::spawn(client_health(health_reader));
+
+    let ping_writer = stream.0.clone();
+    tokio::spawn(ping_client(ping_writer));
 
     let report_writer = stream.0.clone();
     video_process_report(
@@ -191,8 +194,20 @@ async fn fetch_summary(
     };
 }
 
-async fn client_health(health_reader: Arc<Mutex<SplitStream<WebSocket>>>) {
-    let mut reader_lock = health_reader.lock().await;
+async fn ping_client(writer: Arc<Mutex<SplitSink<WebSocket, Message>>>) {
+    loop {
+        let mut writer_lock = writer.lock().await;
+
+        if writer_lock.send(Message::Ping(vec![0])).await.is_err() {
+            return;
+        }
+
+        tokio::time::sleep(Duration::from_secs(10)).await;
+    }
+}
+
+async fn client_health(reader: Arc<Mutex<SplitStream<WebSocket>>>) {
+    let mut reader_lock = reader.lock().await;
 
     // Wait for reading, when client disconnects, this loop quits too, causing the stream to drop.
     while let Ok(Some(_)) = reader_lock.try_next().await {}
