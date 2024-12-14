@@ -120,7 +120,6 @@ function summarizeVideo() {
 
     const url = providedUrl.value;
 
-    socketClient.connect(url);
-
-    socketClient.bind();
+    summarixClient.connect(url);
+    summarixClient.bind();
 }
