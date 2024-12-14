@@ -24,7 +24,7 @@ pub struct SummaryResponse {
 
 #[derive(Serialize, Deserialize)]
 pub struct SummaryResult {
-    response: String,
+    pub response: String,
 }
 
 #[derive(Deserialize)]

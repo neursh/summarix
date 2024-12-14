@@ -97,7 +97,7 @@ async fn video_process_report(
         }
     }
 
-    let response = match fetch_summary(workers_ai_auth, raw_context).await {
+    let mut response = match fetch_summary(workers_ai_auth, raw_context).await {
         Some(summary) => summary,
         None => {
             {
@@ -110,6 +110,14 @@ async fn video_process_report(
     };
 
     let mut result_write = writer.lock().await;
+
+    // Avoid the introduction of the response.
+    if response.result.response.contains("\n\n") {
+        response.result.response = response.result.response
+            .split_once("\n\n")
+            .unwrap()
+            .1.to_owned();
+    }
 
     let _ = result_write.send(Message::Text(serde_json::to_string(&response).unwrap())).await;
     let _ = result_write.close().await;
