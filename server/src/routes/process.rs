@@ -81,7 +81,7 @@ async fn video_process_report(
 
     let raw_context = serde_json::to_string(&context).unwrap();
 
-    if raw_context.len() > 10000 || context.subtitle.len() < 2000 {
+    if raw_context.len() > 10000 || context.subtitle.len() < 1000 {
         {
             let progress_report = writer.clone();
             progress_update(progress_report, "failed", "length check").await;
