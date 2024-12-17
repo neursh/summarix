@@ -1,14 +1,22 @@
 const { animate, stagger } = Motion;
 
+const providedUrl = document.getElementById("providedUrl");
+const videoPreview = document.getElementById("videoPreview");
+const summarizeButton = document.getElementById("summarize");
+
 class SummarixClient {
     socket;
     connected = false;
 
-    connect(url) {
+    takeover() {
         if (!this.connected) {
+            providedUrl.setAttribute("disabled", "");
+            summarizeButton.setAttribute("disabled", "");
+            const url = providedUrl.value;
+
             this.connected = true;
             this.socket = new WebSocket(
-                `wss://dev.neurs.click/process?url=${url}`
+                `ws://localhost:4173/process?url=${url}`
             );
         }
     }
@@ -19,26 +27,22 @@ class SummarixClient {
             this.socket.addEventListener("message", (event) => {
                 console.log(event.data);
             });
-            this.socket.addEventListener("close", () => {});
+            this.socket.addEventListener("close", () => {
+                providedUrl.removeAttribute("disabled");
+                summarizeButton.removeAttribute("disabled");
+            });
         }
     }
 }
 
 const summarixClient = new SummarixClient();
 
-const providedUrl = document.getElementById("providedUrl");
-const videoPreview = document.getElementById("videoPreview");
-const summarizeButton = document.getElementById("summarize");
-
-introAnimation();
+window.onload = () => {
+    document.getElementsByTagName("body")[0].style.opacity = 1;
+    introAnimation();
+};
 
 async function introAnimation() {
-    animate(
-        ".navbar .title span",
-        { opacity: 1, translate: "0px" },
-        { ease: [0.25, 0.25, 0, 1], duration: 1, delay: stagger(0.05) }
-    );
-
     animate(
         ".background .stripes div",
         { height: "100%" },
@@ -97,13 +101,13 @@ function updatePreview(id) {
         videoPreview.src = composeUrl;
 
         animate(
-            "#summarize",
+            summarizeButton,
             { translate: openSummarize ? ["6rem", "9rem"] : "6rem" },
             { ease: [0.25, 0.25, 0, 1], duration: 0.5 }
         );
 
         animate(
-            "#providedUrl",
+            providedUrl,
             { translate: openSummarize ? ["0rem", "-3rem"] : "0rem" },
             { ease: [0.25, 0.25, 0, 1], duration: 0.5 }
         );
@@ -115,11 +119,6 @@ function urlInputChange() {
 }
 
 function summarizeVideo() {
-    providedUrl.setAttribute("disabled", "");
-    summarizeButton.setAttribute("disabled", "");
-
-    const url = providedUrl.value;
-
-    summarixClient.connect(url);
+    summarixClient.takeover();
     summarixClient.bind();
 }
